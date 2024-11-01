@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.github.dfauth</groupId>
+    <artifactId>artifact</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>artifact</name>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.2</version>
+        <relativePath/>
+    </parent>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <quickfixj.version>2.3.1</quickfixj.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.quickfixj</groupId>
+            <artifactId>quickfixj-all</artifactId>
+            <version>${quickfixj.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.quickfixj</groupId>
+            <artifactId>quickfixj-codegenerator</artifactId>
+            <version>${quickfixj.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.34</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.dfauth</groupId>
+            <artifactId>trycatch</artifactId>
+            <version>0.1.6</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.quickfixj</groupId>
+                <artifactId>quickfixj-codegenerator</artifactId>
+                <version>${quickfixj.version}</version>
+                <executions>
+                    <execution>
+                        <id>fixt11</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <schemaDirectory>${project.basedir}/src/main/resources/quickfixj/codegenerator</schemaDirectory>
+                            <dictFile>${project.basedir}/src/main/resources/quickfixj/FIXT11.xml</dictFile>
+                            <packaging>io.github.dfauth.mrfixit.messages</packaging>
+                            <fieldPackage>io.github.dfauth.mrfixit.fields</fieldPackage>
+                            <decimal>true</decimal>
+                            <outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>fix50sp2</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <schemaDirectory>${project.basedir}/src/main/resources/quickfixj/codegenerator</schemaDirectory>
+                            <dictFile>${project.basedir}/src/main/resources/quickfixj/FIX50SP2.xml</dictFile>
+                            <packaging>io.github.dfauth.mrfixit.messages</packaging>
+                            <fieldPackage>io.github.dfauth.mrfixit.fields</fieldPackage>
+                            <decimal>true</decimal>
+                            <outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
