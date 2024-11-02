@@ -61,6 +61,8 @@
 package <xsl:value-of select="$fieldPackage"/>;
 
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.lang.Runnable;
 import java.util.Map;
 import quickfix.Field;
 import quickfix.<xsl:call-template name="get-field-type"/>Field;
@@ -84,6 +86,15 @@ public class <xsl:value-of select="@name"/> extends <xsl:call-template name="get
 
     public static Optional&lt;Field&lt;?&gt;&gt; fieldLookup(Map&lt;Integer,Field&lt;?&gt;&gt; fieldMap) {
         return Optional.ofNullable(fieldMap.get(FIELD));
+    }
+
+    public static Optional&lt;<xsl:call-template name="get-boxed-type"/>&gt; valueLookup(Map&lt;Integer,Field&lt;?&gt;&gt; fieldMap) {
+        return fieldLookup(fieldMap).map(<xsl:call-template name="get-field-type"/>Field.class::cast)
+                   .map(<xsl:call-template name="get-field-type"/>Field::getValue);
+    }
+
+    public static void withField(Map&lt;Integer,Field&lt;?&gt;&gt; fieldMap, Consumer&lt;?&gt; consumer, Runnable runnable) {
+        valueLookup(fieldMap).ifPresentOrElse((Consumer&lt;<xsl:call-template name="get-boxed-type"/>&gt;) consumer, runnable);
     }
 
 	<xsl:call-template name="values"/>
@@ -127,6 +138,34 @@ public class <xsl:value-of select="@name"/> extends <xsl:call-template name="get
      <xsl:when test="@type='PERCENTAGE'">double</xsl:when>
      <xsl:when test="@type='SEQNUM'">int</xsl:when>
      <xsl:when test="@type='LENGTH'">int</xsl:when>
+     <xsl:when test="@type='COUNTRY'">String</xsl:when>
+     <xsl:when test="@type='MULTIPLESTRINGVALUE'">String</xsl:when>
+     <xsl:when test="@type='MULTIPLEVALUESTRING'">String</xsl:when>
+     <xsl:otherwise>String</xsl:otherwise>
+   </xsl:choose>
+</xsl:template>
+
+<xsl:template name="get-boxed-type">
+   <xsl:choose>
+     <xsl:when test="@type='STRING'">String</xsl:when>
+     <xsl:when test="@type='CHAR'">Character</xsl:when>
+     <xsl:when test="@type='PRICE'"><xsl:value-of select="$decimalType"/></xsl:when>
+     <xsl:when test="@type='INT'">Integer</xsl:when>
+     <xsl:when test="@type='AMT'"><xsl:value-of select="$decimalType"/></xsl:when>
+     <xsl:when test="@type='QTY'"><xsl:value-of select="$decimalType"/></xsl:when>
+     <xsl:when test="@type='CURRENCY'">String</xsl:when>
+     <xsl:when test="@type='UTCTIMESTAMP'">LocalDateTime</xsl:when>
+     <xsl:when test="@type='UTCTIME'">LocalTime</xsl:when>
+     <xsl:when test="@type='UTCTIMEONLY'">LocalTime</xsl:when>
+     <xsl:when test="@type='UTCDATE'">LocalDate</xsl:when>
+     <xsl:when test="@type='UTCDATEONLY'">LocalDate</xsl:when>
+     <xsl:when test="@type='BOOLEAN'">Boolean</xsl:when>
+     <xsl:when test="@type='FLOAT'">Double</xsl:when>
+     <xsl:when test="@type='PRICEOFFSET'"><xsl:value-of select="$decimalType"/></xsl:when>
+     <xsl:when test="@type='NUMINGROUP'">Integer</xsl:when>
+     <xsl:when test="@type='PERCENTAGE'">Double</xsl:when>
+     <xsl:when test="@type='SEQNUM'">Integer</xsl:when>
+     <xsl:when test="@type='LENGTH'">Integer</xsl:when>
      <xsl:when test="@type='COUNTRY'">String</xsl:when>
      <xsl:when test="@type='MULTIPLESTRINGVALUE'">String</xsl:when>
      <xsl:when test="@type='MULTIPLEVALUESTRING'">String</xsl:when>

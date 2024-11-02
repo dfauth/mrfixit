@@ -78,7 +78,11 @@
   <xsl:variable name="package" select="concat($messagePackage,$subpackage)"/>
 package <xsl:value-of select="$package"/>;
 
+import quickfix.Field;
 import quickfix.FieldNotFound;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.lang.Runnable;
 <xsl:call-template name="extra-imports"/>
 
 public class <xsl:value-of select="@name"/> extends <xsl:value-of select="$baseClass"/> {
@@ -120,8 +124,21 @@ public class <xsl:value-of select="@name"/> extends <xsl:value-of select="$baseC
 	}
 
 	public static class <xsl:value-of select="@name"/>Builder extends io.github.dfauth.mrfixit.ReflectiveBuilder&lt;<xsl:value-of select="concat(@name,'Builder')"/>&gt; {
+
+	<xsl:for-each select="field[@required='Y']">
+		<xsl:variable name="varname" select="concat(translate(substring(@name, 1, 1),
+			'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+			'abcdefghijklmnopqrstuvwxyz'),
+		substring(@name, 2, string-length(@name)-1))"/>
+		private <xsl:value-of select="$fieldPackage"/>.<xsl:value-of select="concat(@name, ' ', $varname)"/>;</xsl:for-each>
+
 	    public <xsl:value-of select="@name"/> build() {
-	        return new <xsl:value-of select="@name"/>();
+	        return new <xsl:value-of select="@name"/>(<xsl:for-each select="field[@required='Y']">
+	<xsl:variable name="varname" select="concat(translate(substring(@name, 1, 1),
+			'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+			'abcdefghijklmnopqrstuvwxyz'),
+		substring(@name, 2, string-length(@name)-1))"/>
+	<xsl:if test="position() > 1">, </xsl:if><xsl:value-of select="$varname"/></xsl:for-each>);
 	    }
 	}
 }
@@ -277,6 +294,19 @@ import quickfix.Group;</xsl:if>
 	public boolean isSet<xsl:value-of select="@name"/>() {
 		return isSetField(<xsl:value-of select="/fix/fields/field[@name=$name]/@number"/>);
 	}
+
+	public Optional&lt;Field&lt;?&gt;&gt; get<xsl:value-of select="@name"/>Opt() {
+	return <xsl:value-of select="$fieldPackage"/>.<xsl:value-of select="@name"/>.fieldLookup(fields);
+	}
+
+	public void with<xsl:value-of select="@name"/>(Consumer&lt;?&gt; consumer) {
+	    with<xsl:value-of select="@name"/>(consumer, ()->{});
+	}
+
+	public void with<xsl:value-of select="@name"/>(Consumer&lt;?&gt; consumer, Runnable runnable) {
+	    <xsl:value-of select="$fieldPackage"/>.<xsl:value-of select="@name"/>.withField(fields,consumer,runnable);
+	}
+
 </xsl:template>
 
 <xsl:template name="component-accessor-template">
