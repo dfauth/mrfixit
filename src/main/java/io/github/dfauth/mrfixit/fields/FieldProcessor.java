@@ -45,8 +45,10 @@ public class FieldProcessor {
                 return BigDecimal.class;
             } else if(CharField.class.isAssignableFrom(fieldClass)) {
                 return Character.class;
-            } else {
+            } else if(StringField.class.isAssignableFrom(fieldClass)) {
                 return String.class;
+            } else {
+                throw new IllegalArgumentException("Unsupported field type: "+fieldClass);
             }
         });
     }

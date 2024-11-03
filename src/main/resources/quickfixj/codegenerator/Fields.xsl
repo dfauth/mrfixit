@@ -60,11 +60,13 @@
 <xsl:template match="fix/fields/field[@name=$fieldName]">
 package <xsl:value-of select="$fieldPackage"/>;
 
+import quickfix.StringField;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.lang.Runnable;
 import java.util.Map;
 import quickfix.Field;
+import static io.github.dfauth.mrfixit.ReflectiveBuilder.convertValue;
 import quickfix.<xsl:call-template name="get-field-type"/>Field;
 <xsl:if test="@type='UTCTIMESTAMP' or @type='UTCTIME' or @type='UTCTIMEONLY'">
 <xsl:choose><xsl:when test="$utcTimestampPrecision">import quickfix.UtcTimestampPrecision;
@@ -89,8 +91,8 @@ public class <xsl:value-of select="@name"/> extends <xsl:call-template name="get
     }
 
     public static Optional&lt;<xsl:call-template name="get-boxed-type"/>&gt; valueLookup(Map&lt;Integer,Field&lt;?&gt;&gt; fieldMap) {
-        return fieldLookup(fieldMap).map(<xsl:call-template name="get-field-type"/>Field.class::cast)
-                   .map(<xsl:call-template name="get-field-type"/>Field::getValue);
+        return fieldLookup(fieldMap).map(StringField.class::cast)
+            .map(f -> convertValue(f.getValue(), <xsl:call-template name="get-boxed-type"/>.class));
     }
 
     public static void withField(Map&lt;Integer,Field&lt;?&gt;&gt; fieldMap, Consumer&lt;?&gt; consumer, Runnable runnable) {

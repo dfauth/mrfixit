@@ -6,15 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
-import quickfix.DecimalField;
 import quickfix.FieldNotFound;
 
 import java.math.BigDecimal;
-import java.util.function.Supplier;
 
-import static io.github.dfauth.trycatch.ExceptionalRunnable.tryCatch;
-import static io.github.dfauth.trycatch.ExceptionalRunnable.tryCatchRunnable;
-import static io.github.dfauth.trycatch.FunctionalUtils.peek;
 import static org.junit.Assert.*;
 
 @Slf4j
@@ -22,11 +17,17 @@ public class TestCase {
 
     @Test
     public void testIt() throws FieldNotFound {
-        var something = new Something("orderId","execId",'A','B','C',bd(1.3),bd(1.12));
+        var something = new Something("orderId","execId",'A','B','C',bd(1.3), bd(1.12));
         ExecutionReport er = ExecutionReport.newBuilder().populate(something).build();
         assertNotNull(er);
         assertEquals(something.getCumQty(),er.getCumQty().getValue());
         er.withCumQty(bd -> assertEquals(something.getCumQty(), bd), failure());
+    }
+
+    @Test
+    public void testMandatory() throws FieldNotFound {
+        var something = new Something("orderId","execId",'A','B','C',bd(1.3), null);
+        assertThrows(IllegalArgumentException.class, () -> ExecutionReport.newBuilder().populate(something).build());
     }
 
     private Runnable failure() {

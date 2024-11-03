@@ -8701,7 +8701,8 @@
     </field>
     <field number="913" name="AgreementDesc" type="STRING"/>
     <field number="914" name="AgreementID" type="STRING"/>
-    <field number="915" name="AgreementDate" type="LOCALMKTDATE"/>
+    <field number="915" name="AgreementDate" type="import quickfix.StringField;
+"/>
     <field number="916" name="StartDate" type="LOCALMKTDATE"/>
     <field number="917" name="EndDate" type="LOCALMKTDATE"/>
     <field number="918" name="AgreementCurrency" type="CURRENCY"/>

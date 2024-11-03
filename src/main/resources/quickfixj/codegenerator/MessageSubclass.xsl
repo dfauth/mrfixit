@@ -138,7 +138,8 @@ public class <xsl:value-of select="@name"/> extends <xsl:value-of select="$baseC
 			'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
 			'abcdefghijklmnopqrstuvwxyz'),
 		substring(@name, 2, string-length(@name)-1))"/>
-	<xsl:if test="position() > 1">, </xsl:if><xsl:value-of select="$varname"/></xsl:for-each>);
+	<xsl:if test="position() > 1">, </xsl:if>mandatory(<xsl:value-of select="$varname"/>,"<xsl:value-of select="$varname"/>")
+</xsl:for-each>);
 	    }
 	}
 }
